@@ -1,11 +1,12 @@
 export class Sprite {
-    constructor(name, numOfTilesX = 1, numOfTilesY = 1, staticSprite = false) {
+    constructor(name, numOfTilesX = 1, numOfTilesY = 1, staticSprite = false, repeat = true) {
         this.name = name
         this.image = new Image()
         this.image.src = `${name}.png`
         this.numOfTilesX = numOfTilesX
         this.numOfTilesY = numOfTilesY
         this.currentFrame = 0
+        this.repeat = repeat
         this.animationSpeed = 200
         this.isLoaded = false
         this.staticSprite = staticSprite
@@ -20,10 +21,13 @@ export class Sprite {
     startAnimationInterval() {
         if (!this.animationTimer)
             this.animationTimer = setInterval(() => {
-                if (this.currentFrame < this.numOfTilesX - 1)
+                if (this.currentFrame < this.numOfTilesX - 1) {
                     this.currentFrame += 1
-                else
+                }
+                else {
                     this.currentFrame = 0
+                }
+
             }, this.animationSpeed)
     }
 
@@ -52,7 +56,7 @@ export class Sprite {
         }
     }
 
-    drawStatic(ctx, x, y, tileIndexX, tileIndexY, width = 0, height = 0, e) {
+    drawStatic(ctx, x, y, tileIndexX, tileIndexY, width = 0, height = 0, scale = 1) {
         if (this.isLoaded) {
             let imageWidth = this.image.width
             let imageHeight = this.image.height
@@ -63,13 +67,13 @@ export class Sprite {
             let cx = tileWidth * tileIndexX
             let cy = tileHeight * tileIndexY
 
-            this.drawSprite(ctx, x, y, cx, cy, tileWidth + width, tileHeight + height)
+            this.drawSprite(ctx, x, y, cx, cy, tileWidth + width, tileHeight + height, scale)
         }
     }
 
-    drawSprite(ctx, x, y, sx = 0, sy = 0, width = null, height = null) {
+    drawSprite(ctx, x, y, sx = 0, sy = 0, width = null, height = null, scale = 1) {
         width = width ? width : this.image.width
         height = height ? height : this.image.height
-        ctx.drawImage(this.image, sx, sy, width, height, x, y, width, height)
+        ctx.drawImage(this.image, sx, sy, width, height, x, y, scale * width, scale * height)
     }
 }
