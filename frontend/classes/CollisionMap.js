@@ -138,5 +138,7 @@ export class CollisionMap {
         })
 
         this.objectList.forEach((item) => item.obj.draw(ctx))
+
+        pp
     }
 }
