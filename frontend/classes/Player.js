@@ -1,23 +1,20 @@
 import { Sprite } from "./Sprite.js"
-import { collisions } from "../main.js"
-import { inventory } from "../main.js"
-import { Axe } from "./Axe.js"
-import { pointer } from "../main.js"
+import { collisions } from "./GameSetup.js"
+import { inventory } from "./GameSetup.js"
+import { ObjectClass } from "./ObjectClass.js"
+import { Tree } from "./Tree.js"
 
-export class Player {
+export class Player extends ObjectClass {
     constructor(x, y) {
-        this.id = this.generateUniqueId()
-        this.x = x
-        this.y = y
+        super(x, y, 0, 0, 4, 4, 48, 48, true, 'player')
         this.collisionMask = {
             x: 17,
             y: 16,
             width: 13,
             height: 15
         }
-        this.width = 48
-        this.height = 48
-        this.sprite = new Sprite('playerr', 4, 4, true)
+        this.tempx = 0
+        this.tempy = 0
         this.spriteAction = new Sprite('player_actions', 2, 12, false, false)
         this.keys = {}
         this.speed = 0.5
@@ -35,6 +32,13 @@ export class Player {
 
         else
             this.sprite.drawAnimation(ctx, Math.round(this.x), Math.round(this.y), this.rotation)
+
+        ctx.beginPath();            // Start a new path
+        ctx.moveTo(this.x + this.collisionMask.x, this.y + this.collisionMask.y);         // Move to the starting point
+        ctx.lineTo(this.tempx, this.tempy);         // Draw a line to the end point
+        // ctx.strokeStyle = black;    // Set the line color
+        // ctx.lineWidth = width;      // Set the line width
+        ctx.stroke();               // Render the line
     }
 
     _registerEvents() {
@@ -42,25 +46,24 @@ export class Player {
             this.keys[event.key.toLowerCase()] = true
             this.sprite.startAnimationInterval()
 
-            if (event.key === 'c') {
+            if (event.key === ' ') {
                 const item = inventory.getSelectedSlotItem()
-                if (!item || item.name !== 'axe') {
+                if (!item || item.name !== 'axe' || this.action !== null) {
                     return
                 }
                 this.action = 'axe'
                 this.spriteAction.stopAnimationInterval()
                 this.spriteAction.startAnimationInterval()
+                this.chopTree()
+
+
                 setTimeout(() => {
                     this.action = null
                 }, 400)
             }
 
-            if (event.key === 'v') {
-                const object = collisions.getClosestObject(this, 20)
-                if (!object) return
-                collisions.removeObject(object.id)
-                inventory.addItem({ name: 'axe', quantity: 1 })
-                //console.log(object)
+            if (event.key.toLowerCase() === 'e') {
+                inventory.pickupItem(this)
             }
         });
 
@@ -72,37 +75,7 @@ export class Player {
     }
 
     updatePosition() {
-
-        // test ptm zmaz
-        const playerCenter = {
-            x: this.x + this.width / 2,
-            y: this.y + this.height / 2
-        };
-        const cursorCenter = {
-            x: pointer.tempX + pointer.width / 2,
-            y: pointer.tempY + pointer.height / 2
-        };
-
-        const dist = collisions.calculateDistance(playerCenter, cursorCenter);
-
-        console.log(dist)
-
-        // Define a threshold for the cursor to start moving towards the player
-        const threshold = 40;
-
-        // Move only if the distance is greater than the threshold
-        if (dist > threshold) {
-            // Calculate direction vector
-            const dx = playerCenter.x - cursorCenter.x;
-            const dy = playerCenter.y - cursorCenter.y;
-
-            // Normalize the direction vector
-            const magnitude = Math.sqrt(dx * dx + dy * dy);
-            const directionX = dx / magnitude;
-            const directionY = dy / magnitude;
-
-            pointer.updatePosition(directionX, directionY)
-        }
+        if (this.action !== null) return
 
         if (this.keys['w']) {
             if (!collisions.checkCollision({ ...this, y: this.y - 1 }))
@@ -126,8 +99,58 @@ export class Player {
         }
     }
 
+    chopTree() {
+        const object = collisions.getClosestObject(this, 10)
+        if (object === null || !object instanceof Tree) return
 
-    generateUniqueId() {
-        return `id_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
+        this.tempx = object.x + object.width / 2
+        this.tempy = object.y + object.height / 2
+        const dx = (object.x + object.width / 2) - (this.x + this.collisionMask.x);
+        const dy = (object.y + object.height / 2) - (this.y + this.collisionMask.y);
+
+        // Normalize the direction vector
+        const magnitude = Math.sqrt(dx * dx + dy * dy);
+        const directionX = dx / magnitude;
+        const directionY = dy / magnitude;
+
+        console.log(directionX, directionY)
+
+
+
+        // if (directionX < -0.5 && this.rotation !== 2) {
+        //     console.log("Player is to the left of the tree.");
+        //     return
+        // } else if (directionX > 0.5 && this.rotation !== 3) {
+        //     console.log("Player is to the right of the tree.");
+        //     return
+        // }
+
+        // if (directionY < -0.5 && this.rotation !== 1) {
+        //     console.log("Player is above the tree.");
+        //     return
+        // } else if (directionY > 0.5 && this.rotation !== 0) {
+        //     console.log("Player is below the tree.");
+        //     return
+        // }
+
+        const direction = this.getDirection(directionX, directionY)
+        if (this.rotation !== direction) {
+            console.log(`Cannot chop tree: Player is facing ${this.rotation}, but needs to face ${direction}.`);
+            return;
+        }
+        console.log("chop")
+        // object.chopTree()
     }
+
+    getDirection(dx, dy) {
+        if (Math.abs(dx) > Math.abs(dy)) {
+            // Horizontal direction
+            return dx > 0 ? 3 : 2; // 3 = right, 2 = left
+        } else {
+            // Vertical direction
+            return dy > 0 ? 0 : 1; // 0 = down, 1 = up
+        }
+    }
+
+    drawDebug(ctx) { }
 }

@@ -1,4 +1,4 @@
-import { Sprite } from "./sprite.js"
+import { Sprite } from "./Sprite.js"
 import { bg } from '../main.js'
 
 export class GrassTile {

@@ -39,3 +39,27 @@ export class Background {
         })
     }
 }
+
+// Function to save data to a file
+function saveToFile(data, filename) {
+    // Create a Blob with the data (JSON format)
+    const blob = new Blob([data], { type: 'text/plain' });
+
+    // Create a link element
+    const link = document.createElement('a');
+
+    // Set the download attribute with a filename
+    link.download = filename;
+
+    // Create a URL for the Blob and set it as the href attribute
+    link.href = URL.createObjectURL(blob);
+
+    // Append the link to the body (required for Firefox)
+    document.body.appendChild(link);
+
+    // Programmatically click the link to trigger the download
+    link.click();
+
+    // Clean up by removing the link element
+    document.body.removeChild(link);
+}

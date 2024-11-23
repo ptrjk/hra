@@ -1,22 +1,26 @@
 import { Sprite } from "./Sprite.js"
-import { collisions } from "../main.js"
+import { collisions } from "./GameSetup.js"
+import { ObjectClass } from "./ObjectClass.js"
 
-export class Tree {
-    constructor(x, y, soffsetX = 1, soffsetY = 0, offsetX = 9, offsetY = 5) {
-        this.id = 'p'
-        this.x = x
-        this.y = y
-        this.soffsetX = soffsetX
-        this.soffsetY = soffsetY
-        this.offsetX = offsetX
-        this.offsetY = offsetY
-        this.width = 32
-        this.height = 32
-        this.sprite = new Sprite('nature', this.offsetX, this.offsetY, true)
-        collisions.addObject(this, false)
+export class Tree extends ObjectClass {
+    constructor(x, y) {
+        super(x, y, 1, 0, 9, 5, 32, 32, false, "nature")
+        collisions.addObject(this, true)
+        this.chopped = false
     }
 
     draw(ctx) {
         this.sprite.drawStatic(ctx, this.x, this.y, this.soffsetX, this.soffsetY, this.width / 2, this.height / 2, true)
+    }
+
+    chopTree() {
+        if (this.chopped) return
+        this.soffsetX = 4
+        this.soffsetY = 2
+        this.width = 0
+        this.height = 0
+        this.x += 8
+        this.y += 17
+        this.chopped = true
     }
 }

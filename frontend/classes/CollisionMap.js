@@ -45,6 +45,8 @@ export class CollisionMap {
             y1 + height1 > y2 &&
             y1 < y2 + height2
         ) {
+            console.log("Coliding with")
+            console.log(object2)
             return true;
         }
         return false;

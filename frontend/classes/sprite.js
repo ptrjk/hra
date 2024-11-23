@@ -2,7 +2,7 @@ export class Sprite {
     constructor(name, numOfTilesX = 1, numOfTilesY = 1, staticSprite = false, repeat = true) {
         this.name = name
         this.image = new Image()
-        this.image.src = `${name}.png`
+        this.image.src = `assets/${name}.png`
         this.numOfTilesX = numOfTilesX
         this.numOfTilesY = numOfTilesY
         this.currentFrame = 0

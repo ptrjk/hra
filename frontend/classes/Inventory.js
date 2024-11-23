@@ -1,5 +1,7 @@
 
 import { Sprite } from "./Sprite.js"
+import { collisions } from "./GameSetup.js"
+import { Axe } from "./Axe.js"
 
 export class Inventory {
     constructor(x = 160 - (96 + 6) / 2, y = 150, soffsetX = 0, soffsetY = 0, offsetX = 1, offsetY = 1, animation = false) {
@@ -50,6 +52,15 @@ export class Inventory {
     generateUniqueId() {
         return `id_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
     }
+
+    pickupItem(player) {
+        const object = collisions.getClosestObject(player, 20)
+        if (!object || !(object instanceof Axe)) return
+        console.log(object)
+        collisions.removeObject(object.id)
+        this.addItem({ name: 'axe', quantity: 1 })
+    }
+
 
     addItem(item) {
         if (this.items.length >= this.maxSize) return // skip if full inventory
