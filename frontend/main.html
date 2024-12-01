@@ -5,18 +5,12 @@
     body {
         padding: 0;
         margin: 0;
-        image-rendering: pixelated;
-        overflow: hidden;
     }
 
     canvas {
-        background-color: wheat;
-        width: 100%;
-        margin: 0;
-        padding: 0;
         display: block;
-        image-rendering: pixelated;
-
+        background-color: rgb(204, 204, 204);
+        width: 100%;
     }
 </style>
 
@@ -29,7 +23,7 @@
 
 <body>
     <div id="app"></div>
-    <canvas width="320" height="180" id="game-canvas"></canvas>
+    <canvas id="game-canvas"></canvas>
     <input id="offsetX" placeholder="offsetX">
     <input id="offsetY" placeholder="offsetY">
     <button id="grass">grass</button>

@@ -1370,38 +1370,38 @@
     {
         "x": 176,
         "y": 16,
-        "soffsetX": 0,
-        "soffsetY": 0,
-        "offsetX": 4,
-        "offsetY": 1,
-        "animation": true,
+        "soffsetX": "1",
+        "soffsetY": "1",
+        "offsetX": 11,
+        "offsetY": 7,
+        "animation": false,
         "width": 16,
         "height": 16,
-        "name": "water"
+        "name": "grass"
     },
     {
         "x": 192,
         "y": 16,
-        "soffsetX": 0,
-        "soffsetY": 0,
-        "offsetX": 4,
-        "offsetY": 1,
-        "animation": true,
+        "soffsetX": "1",
+        "soffsetY": "1",
+        "offsetX": 11,
+        "offsetY": 7,
+        "animation": false,
         "width": 16,
         "height": 16,
-        "name": "water"
+        "name": "grass"
     },
     {
         "x": 208,
         "y": 16,
-        "soffsetX": 0,
-        "soffsetY": 0,
-        "offsetX": 4,
-        "offsetY": 1,
-        "animation": true,
+        "soffsetX": "1",
+        "soffsetY": "1",
+        "offsetX": 11,
+        "offsetY": 7,
+        "animation": false,
         "width": 16,
         "height": 16,
-        "name": "water"
+        "name": "grass"
     },
     {
         "x": 224,

@@ -8,13 +8,17 @@ import { Axe } from "./Axe.js";
 import Camera from "./Camera.js";
 
 const canvas = document.getElementById('game-canvas');
-
+canvas.width = 1920;
+canvas.height = 1080;
 
 const ctx = canvas.getContext('2d');
+
 
 ctx.imageSmoothingEnabled = false;
 ctx.webkitImageSmoothingEnabled = false;
 ctx.mozImageSmoothingEnabled = false;
+
+
 
 export const collisions = new CollisionMap()
 export const pointer = new Pointer(20, 20)
@@ -22,9 +26,16 @@ export const bg = new Background()
 bg.generateMap()
 export const inventory = new Inventory()
 
-const player = new Player(128, 32)
+
 const tree = new Tree(64, 32)
 const axe = new Axe(100, 50)
+const player = new Player(50, 50)
+
+// const playerImage = new Image();
+// playerImage.src = 'assets/testplayer.png'; // Replace with your image URL
+// playerImage.onload = () => player.load = true
+// // Game objects
+// const player = { x: 20, y: 20, width: 32, height: 32, load: false };
 
 export const camera = new Camera(canvas.width, canvas.height)
 // export const camera = new Camera()
@@ -42,12 +53,24 @@ const playerr = {
 };
 
 let test = 0
+let zoomFactor = 5
 
-window.addEventListener("keydown", (e) => {
-    if (e.key === 't') {
-        test += 10
+canvas.addEventListener("wheel", (event) => {
+    if (event.deltaY < 0) {
+        zoomFactor *= 1.1; // Zoom in
+    } else {
+        zoomFactor /= 1.1; // Zoom out
     }
-})
+    setCamera();
+    event.preventDefault();
+});
+
+function setCamera() {
+    console.log(zoomFactor)
+    ctx.setTransform(zoomFactor, 0, 0, zoomFactor, 0, 0);
+}
+
+setCamera()
 
 playerr.image.src = 'assets/testplayer.png';
 
@@ -58,32 +81,24 @@ export class GameSetup {
     drawAll(fps) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-
-        // Save the current state
         ctx.save();
-
-        // ctx.drawImage(playerr.image, 0, 0)
-
         ctx.translate(-camera.x, 0)
 
+        if (player.load === false) return
 
         console.log(player.x)
-
         // console.log(camera.x)
 
         // Draw all game objects with the scaled context
         bg.drawMap(ctx);
         collisions.drawAll(ctx);
         inventory.draw(ctx);
-        pointer.draw(ctx);
-
-        ctx.fillStyle = "white";
-        ctx.font = "8px Arial";
-        ctx.fillText(`FPS: ${fps}`, 10, 30);
-
-
-        // Restore to the original state
         ctx.restore();
+        // pointer.draw(ctx);
+
+        // ctx.drawImage(playerImage, player.x, player.y, player.width, player.height);
+
+
     }
 
 }

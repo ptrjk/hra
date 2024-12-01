@@ -14,12 +14,12 @@ export class Player extends ObjectClass {
             height: 15
         }
         this.image = new Image()
-        this.image.src = `assets/testnature.svg`
+        this.image.src = `assets/testplayer.png`
         this.tempx = x
         this.tempy = y
         this.spriteAction = new Sprite('player_actions', 2, 12, false, false)
         this.keys = {}
-        this.speed = 0.3
+        this.speed = 0.5
         this.rotation = 0
         this.action = null
         this._registerEvents()
@@ -28,7 +28,7 @@ export class Player extends ObjectClass {
 
     draw(ctx) {
         this.updatePosition()
-        ctx.drawImage(this.image, 0, 0, 16, 32, this.x, this.y, 16, 32)
+        ctx.drawImage(this.image, 0, 0, 32, 32, this.x, this.y, 32, 32)
         // context.drawImage(img, sx, sy, swidth, sheight, x, y, width, height)
         // if (this.action == 'axe') {
         //     this.spriteAction.drawAnimation(ctx, Math.round(this.x), Math.round(this.y), 4 + this.rotation)
@@ -36,7 +36,7 @@ export class Player extends ObjectClass {
 
         // else
         //     // ctx.drawImage(this.image, 300, 300, 32, 32)
-        this.sprite.drawStatic(ctx, this.x, this.y, this.soffsetX, this.soffsetY, this.width / 2, this.height / 2, true)
+        //this.sprite.drawStatic(ctx, this.x, this.y, this.soffsetX, this.soffsetY, this.width / 2, this.height / 2, true)
         //     this.sprite.drawAnimation(ctx, Math.round(this.x), Math.round(this.y), this.rotation)
     }
 
@@ -109,8 +109,8 @@ export class Player extends ObjectClass {
                 // camera.x = -this.x + 50
             }
         }
-        camera.x = Math.max(0, Math.min(this.x - camera.width / 2, 2000 - camera.width));
-        camera.y = Math.max(0, Math.min(this.y - camera.height / 2, 2000 - camera.height));
+        camera.x = Math.max(0, Math.min(this.x - camera.width / 5 / 2, 2000 - camera.width));
+        camera.y = Math.max(0, Math.min(this.y - camera.height / 5 / 2, 2000 - camera.height));
     }
 
     chopTree() {
