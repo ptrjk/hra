@@ -45,17 +45,31 @@ const itemList = []
 //     itemList.push(ob)
 
 // })
+let lastFrameTime = 0; // Tracks the time of the last frame
+let fps = 0;
+const frameDuration = 1000 / 1000; // Target frame duration in milliseconds (30 FPS)
 
-gameLoop()
+// Start the game loop
+requestAnimationFrame(gameLoop);
 
-function drawSprite() {
-    gameSetup.drawAll()
+function gameLoop(timestamp) {
+    const deltaTime = timestamp - lastFrameTime; // Time since last frame in milliseconds
+
+    if (deltaTime >= frameDuration) {
+        // Update the last frame time
+        lastFrameTime = timestamp;
+
+        // Calculate FPS
+        fps = Math.round(1000 / deltaTime);
+
+        // Perform game logic and rendering
+        gameSetup.drawAll(fps);
+    }
+
+    // Request the next frame
+    requestAnimationFrame(gameLoop);
 }
 
-function gameLoop() {
-    drawSprite()
-    requestAnimationFrame(gameLoop)
-}
 console.log("main executed")
 
 

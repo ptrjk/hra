@@ -1,5 +1,5 @@
 import { Sprite } from "./Sprite.js"
-import { collisions } from "./GameSetup.js"
+import { camera, collisions, pointer } from "./GameSetup.js"
 import { inventory } from "./GameSetup.js"
 import { ObjectClass } from "./ObjectClass.js"
 import { Tree } from "./Tree.js"
@@ -13,11 +13,13 @@ export class Player extends ObjectClass {
             width: 13,
             height: 15
         }
-        this.tempx = 0
-        this.tempy = 0
+        this.image = new Image()
+        this.image.src = `assets/testnature.svg`
+        this.tempx = x
+        this.tempy = y
         this.spriteAction = new Sprite('player_actions', 2, 12, false, false)
         this.keys = {}
-        this.speed = 0.5
+        this.speed = 0.3
         this.rotation = 0
         this.action = null
         this._registerEvents()
@@ -26,19 +28,16 @@ export class Player extends ObjectClass {
 
     draw(ctx) {
         this.updatePosition()
-        if (this.action == 'axe') {
-            this.spriteAction.drawAnimation(ctx, Math.round(this.x), Math.round(this.y), 4 + this.rotation)
-        }
+        ctx.drawImage(this.image, 0, 0, 16, 32, this.x, this.y, 16, 32)
+        // context.drawImage(img, sx, sy, swidth, sheight, x, y, width, height)
+        // if (this.action == 'axe') {
+        //     this.spriteAction.drawAnimation(ctx, Math.round(this.x), Math.round(this.y), 4 + this.rotation)
+        // }
 
-        else
-            this.sprite.drawAnimation(ctx, Math.round(this.x), Math.round(this.y), this.rotation)
-
-        ctx.beginPath();            // Start a new path
-        ctx.moveTo(this.x + this.collisionMask.x, this.y + this.collisionMask.y);         // Move to the starting point
-        ctx.lineTo(this.tempx, this.tempy);         // Draw a line to the end point
-        // ctx.strokeStyle = black;    // Set the line color
-        // ctx.lineWidth = width;      // Set the line width
-        ctx.stroke();               // Render the line
+        // else
+        //     // ctx.drawImage(this.image, 300, 300, 32, 32)
+        this.sprite.drawStatic(ctx, this.x, this.y, this.soffsetX, this.soffsetY, this.width / 2, this.height / 2, true)
+        //     this.sprite.drawAnimation(ctx, Math.round(this.x), Math.round(this.y), this.rotation)
     }
 
     _registerEvents() {
@@ -78,79 +77,68 @@ export class Player extends ObjectClass {
         if (this.action !== null) return
 
         if (this.keys['w']) {
-            if (!collisions.checkCollision({ ...this, y: this.y - 1 }))
-                this.y -= this.speed
+            if (!collisions.checkCollision({ ...this, y: this.y - 1 })) {
+                this.tempy -= this.speed
+                this.y = Math.floor(this.tempy)
+
+            }
+
             this.rotation = 1
         }
         if (this.keys['a']) {
-            if (!collisions.checkCollision({ ...this, x: this.x - 1 }))
-                this.x -= this.speed
+            if (!collisions.checkCollision({ ...this, x: this.x - 1 })) {
+                this.tempx -= this.speed
+                this.x = Math.floor(this.tempx)
+                // camera.x = -this.x + 50
+            }
             this.rotation = 2
         }
         if (this.keys['s']) {
-            if (!collisions.checkCollision({ ...this, y: this.y + 1 }))
-                this.y += this.speed
+            if (!collisions.checkCollision({ ...this, y: this.y + 1 })) {
+                this.tempy += this.speed
+                this.y = Math.floor(this.tempy)
+            }
+
             this.rotation = 0
         }
         if (this.keys['d']) {
             this.rotation = 3
-            if (!collisions.checkCollision({ ...this, x: this.x + 1 }))
-                this.x += this.speed
+            if (!collisions.checkCollision({ ...this, x: this.x + 1 })) {
+                this.tempx += this.speed
+                this.x = Math.floor(this.tempx)
+                // camera.x = -this.x + 50
+            }
         }
+        camera.x = Math.max(0, Math.min(this.x - camera.width / 2, 2000 - camera.width));
+        camera.y = Math.max(0, Math.min(this.y - camera.height / 2, 2000 - camera.height));
     }
 
     chopTree() {
-        const object = collisions.getClosestObject(this, 10)
+        const object = pointer.pointing
+        console.log(object)
         if (object === null || !object instanceof Tree) return
 
-        this.tempx = object.x + object.width / 2
-        this.tempy = object.y + object.height / 2
-        const dx = (object.x + object.width / 2) - (this.x + this.collisionMask.x);
-        const dy = (object.y + object.height / 2) - (this.y + this.collisionMask.y);
+        const dx = (object.x + object.width / 2) - (this.x + this.collisionMask.x)
+        const dy = (object.y + object.height / 2) - (this.y + this.collisionMask.y)
 
         // Normalize the direction vector
-        const magnitude = Math.sqrt(dx * dx + dy * dy);
-        const directionX = dx / magnitude;
-        const directionY = dy / magnitude;
-
-        console.log(directionX, directionY)
-
-
-
-        // if (directionX < -0.5 && this.rotation !== 2) {
-        //     console.log("Player is to the left of the tree.");
-        //     return
-        // } else if (directionX > 0.5 && this.rotation !== 3) {
-        //     console.log("Player is to the right of the tree.");
-        //     return
-        // }
-
-        // if (directionY < -0.5 && this.rotation !== 1) {
-        //     console.log("Player is above the tree.");
-        //     return
-        // } else if (directionY > 0.5 && this.rotation !== 0) {
-        //     console.log("Player is below the tree.");
-        //     return
-        // }
+        const magnitude = Math.sqrt(dx * dx + dy * dy)
+        const directionX = dx / magnitude
+        const directionY = dy / magnitude
 
         const direction = this.getDirection(directionX, directionY)
-        if (this.rotation !== direction) {
-            console.log(`Cannot chop tree: Player is facing ${this.rotation}, but needs to face ${direction}.`);
-            return;
-        }
-        console.log("chop")
-        // object.chopTree()
+        this.rotation = direction
+
+        object.chopTree()
     }
 
     getDirection(dx, dy) {
         if (Math.abs(dx) > Math.abs(dy)) {
             // Horizontal direction
-            return dx > 0 ? 3 : 2; // 3 = right, 2 = left
+            return dx > 0 ? 3 : 2 // 3 = right, 2 = left
         } else {
             // Vertical direction
-            return dy > 0 ? 0 : 1; // 0 = down, 1 = up
+            return dy > 0 ? 0 : 1 // 0 = down, 1 = up
         }
     }
-
-    drawDebug(ctx) { }
 }
