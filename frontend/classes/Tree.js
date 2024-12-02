@@ -1,5 +1,5 @@
 import { Sprite } from "./Sprite.js"
-import { collisions } from "./GameSetup.js"
+import { camera, collisions } from "./GameSetup.js"
 import { ObjectClass } from "./ObjectClass.js"
 
 export class Tree extends ObjectClass {

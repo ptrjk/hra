@@ -1,6 +1,6 @@
 
 
-export class CollisionMap {
+export class ObjectsMap {
 
     constructor() {
         this.objectList = []

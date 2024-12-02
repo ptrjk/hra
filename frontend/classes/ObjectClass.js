@@ -20,4 +20,11 @@ export class ObjectClass {
     generateUniqueId() {
         return `id_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
     }
+
+    draw(ctx) {
+        if (!this.animation)
+            this.sprite.drawStatic(ctx, this.x, this.y, this.soffsetX, this.soffsetY)
+        else
+            this.sprite.drawAnimation(ctx, this.x, this.y, 0)
+    }
 }

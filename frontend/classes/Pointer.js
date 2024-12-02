@@ -1,24 +1,15 @@
 import { Sprite } from "./Sprite.js"
 import { collisions } from "./GameSetup.js"
 import { Tree } from "./Tree.js"
+import { ObjectClass } from "./ObjectClass.js"
 
-export class Pointer {
-    constructor(x, y, soffsetX = 0, soffsetY = 0, offsetX = 1, offsetY = 1, animation = false) {
-        this.id = this.generateUniqueId()
-        this.x = x
-        this.y = y
+export class Pointer extends ObjectClass {
+    constructor(x, y) {
+        super(x, y, 0, 0, 1, 1, 16, 16, false, 'p1')
         this.tempX = x
         this.tempY = y
-        this.soffsetX = soffsetX
-        this.soffsetY = soffsetY
-        this.offsetX = offsetX
-        this.offsetY = offsetY
-        this.animation = animation
         this.visibility = true
-        this.width = 16
-        this.height = 16
         this.pointing = null
-        this.sprite = new Sprite('p1', this.offsetX, this.offsetY, !animation)
         this.p1 = new Sprite('p1', this.offsetX, this.offsetY, false)
         this.p2 = new Sprite('p2', this.offsetX, this.offsetY, false)
         this.p3 = new Sprite('p3', this.offsetX, this.offsetY, false)
@@ -39,10 +30,6 @@ export class Pointer {
         this.p3.drawStatic(ctx, this.tempx + this.width - 3, this.tempy + this.height - 3, this.soffsetX, this.soffsetY)
         this.p4.drawStatic(ctx, this.tempx, this.tempy + this.height - 3, this.soffsetX, this.soffsetY)
 
-    }
-
-    generateUniqueId() {
-        return `id_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
     }
 
     updatePosition(x, y) {

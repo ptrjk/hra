@@ -2,23 +2,14 @@
 import { Sprite } from "./Sprite.js"
 import { collisions } from "./GameSetup.js"
 import { Axe } from "./Axe.js"
+import { ObjectClass } from "./ObjectClass.js"
 
-export class Inventory {
+export class Inventory extends ObjectClass {
     constructor(x = 160 - (96 + 6) / 2, y = 150, soffsetX = 0, soffsetY = 0, offsetX = 1, offsetY = 1, animation = false) {
-        this.id = this.generateUniqueId()
-        this.x = x
-        this.y = y
-        this.soffsetX = soffsetX
-        this.soffsetY = soffsetY
-        this.offsetX = offsetX
-        this.offsetY = offsetY
-        this.animation = animation
-        this.width = 24
-        this.height = 24
+        super(x, y, 0, 0, 1, 1, 24, 24, false, "slot")
         this.items = []
         this.maxSize = 4
         this.selectedSlot = 0
-        this.sprite = new Sprite('slot', this.offsetX, this.offsetY, !animation)
         this.spriteSelected = new Sprite('slot_selected', this.offsetX, this.offsetY, !animation)
         this.itemSprites = []
         this._registerEvents()
@@ -47,10 +38,6 @@ export class Inventory {
         this.itemSprites.forEach((item, index) => {
             item.drawStatic(ctx, (this.x + 4) + 24 * index + 2 * index, this.y + 4, 1, 0, 0, 0, 1)
         })
-    }
-
-    generateUniqueId() {
-        return `id_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
     }
 
     pickupItem(player) {
