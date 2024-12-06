@@ -7,14 +7,31 @@ export class Tree extends ObjectClass {
         super(x, y, 1, 0, 9, 5, 32, 32, false, "nature")
         collisions.addObject(this, true)
         this.chopped = false
+        this.effect = 0
+        this.lives = 3
     }
 
     draw(ctx) {
+        if (this.effect !== 0) {
+            ctx.save()
+            ctx.filter = `brightness(${1 + this.effect})`
+        }
         this.sprite.drawStatic(ctx, this.x, this.y, this.soffsetX, this.soffsetY, this.width / 2, this.height / 2, true)
+        if (this.effect !== 0) {
+            ctx.restore()
+        }
+        if (this.effect > 0) {
+            this.effect = Math.max(this.effect - 0.05, 0)
+        }
     }
 
     chopTree() {
         if (this.chopped) return
+        if (this.lives > 1) {
+            this.lives -= 1
+            this.effect = 1
+            return
+        }
         this.soffsetX = 4
         this.soffsetY = 2
         this.width = 0

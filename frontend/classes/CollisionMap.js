@@ -45,8 +45,6 @@ export class ObjectsMap {
             y1 + height1 > y2 &&
             y1 < y2 + height2
         ) {
-            console.log("Coliding with")
-            console.log(object2)
             return true;
         }
         return false;
@@ -100,7 +98,13 @@ export class ObjectsMap {
     }
 
     calculateDistance(object, object2) {
-        return Math.sqrt((object.x - object2.x) ** 2 + (object.y - object2.y) ** 2)
+        const centerX1 = object.x + object.width / 2;
+        const centerY1 = object.y + object.height / 2;
+
+        const centerX2 = object2.x + object2.width / 2;
+        const centerY2 = object2.y + object2.height / 2;
+
+        return Math.sqrt((centerX1 - centerX2) ** 2 + (centerY1 - centerY2) ** 2);
     }
 
     getClosestObject(object, radius = 0) {
@@ -122,6 +126,19 @@ export class ObjectsMap {
             }
         })
         return closestObject
+    }
+
+    getClosestObjectsList(object, radius = 0) {
+        const objects = this.getObjectsInRange(object, radius)
+        let closestObjects = []
+
+        objects.forEach((item) => {
+            const res = this.calculateDistance(object, item.obj)
+            if (res <= radius) {
+                closestObjects.push(item.obj)
+            }
+        })
+        return closestObjects
     }
 
     drawAll(ctx) {

@@ -82,16 +82,16 @@ window.addEventListener("mousemove", (e) => {
         return
     }
 
-    const playerCenter = {
-        x: player.x + player.width / 2,
-        y: player.y + player.height / 2
-    };
     const cursorCenter = {
         x: Math.floor(e.clientX / rect.width * (canvas.width / zoomFactor) / 16) * 16,
         y: Math.floor(e.clientY / rect.height * (canvas.height / zoomFactor) / 16) * 16
     };
 
-    const dist = collisions.calculateDistance(playerCenter, cursorCenter);
+    // const playerCenter = {
+    //     x: player.x + player.width / 2,
+    //     y: player.y + player.height / 2
+    // };
+    //const dist = collisions.calculateDistance(playerCenter, cursorCenter);
 
     // if (dist >= 40) {
     //     pointer.visibility = false

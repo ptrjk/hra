@@ -41,10 +41,16 @@ export class Inventory extends ObjectClass {
     }
 
     pickupItem(player) {
-        const object = collisions.getClosestObject(player, 20)
-        if (!object || !(object instanceof Axe)) return
-        console.log(object)
-        collisions.removeObject(object.id)
+        const objects = collisions.getClosestObjectsList(player, 20)
+
+        const axeIndex = objects.findIndex((item) => {
+            if (item instanceof Axe) return true
+        })
+
+        console.log(objects)
+        console.log(axeIndex)
+        if (axeIndex === -1) return
+        collisions.removeObject(objects[axeIndex].id)
         this.addItem({ name: 'axe', quantity: 1 })
     }
 
