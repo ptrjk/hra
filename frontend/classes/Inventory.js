@@ -3,15 +3,15 @@ import { Sprite } from "./Sprite.js"
 import { collisions } from "./GameSetup.js"
 import { Axe } from "./Axe.js"
 import { ObjectClass } from "./ObjectClass.js"
+import { Hoe } from "./Hoe.js"
 
 export class Inventory extends ObjectClass {
-    constructor(x = 160 - (96 + 6) / 2, y = 150, soffsetX = 0, soffsetY = 0, offsetX = 1, offsetY = 1, animation = false) {
+    constructor(x = 160 - (96 + 6) / 2, y = 150) {
         super(x, y, 0, 0, 1, 1, 24, 24, false, "slot")
         this.items = []
         this.maxSize = 4
         this.selectedSlot = 0
-        this.spriteSelected = new Sprite('slot_selected', this.offsetX, this.offsetY, !animation)
-        this.itemSprites = []
+        this.spriteSelected = new Sprite('slot_selected', this.offsetX, this.offsetY, false)
         this._registerEvents()
     }
 
@@ -35,30 +35,33 @@ export class Inventory extends ObjectClass {
             drawingSprite.drawStatic(ctx, this.x + 24 * i + (2 * i), this.y, this.soffsetX, this.soffsetY)
         }
 
-        this.itemSprites.forEach((item, index) => {
-            item.drawStatic(ctx, (this.x + 4) + 24 * index + 2 * index, this.y + 4, 1, 0, 0, 0, 1)
+        this.items.forEach((item, index) => {
+            item.sprite.drawStatic(ctx, (this.x + 4) + 24 * index + 2 * index, this.y + 4, item.soffsetX, item.soffsetY, 0, 0, 1)
         })
     }
 
     pickupItem(player) {
         const objects = collisions.getClosestObjectsList(player, 20)
 
-        const axeIndex = objects.findIndex((item) => {
-            if (item instanceof Axe) return true
+        const pickableIndex = objects.findIndex((item) => {
+            if (item instanceof Axe || item instanceof Hoe) return true
         })
 
-        console.log(objects)
-        console.log(axeIndex)
-        if (axeIndex === -1) return
-        collisions.removeObject(objects[axeIndex].id)
-        this.addItem({ name: 'axe', quantity: 1 })
-    }
+        if (pickableIndex === -1) return
 
+        const item = objects[pickableIndex]
+        collisions.removeObject(item.id)
+
+        console.log(item)
+
+        if (item instanceof Axe)
+            this.addItem({ name: 'axe', quantity: 1, soffsetX: item.soffsetX, soffsetY: item.soffsetY, sprite: item.sprite })
+        if (item instanceof Hoe)
+            this.addItem({ name: 'hoe', quantity: 1, soffsetX: item.soffsetX, soffsetY: item.soffsetY, sprite: item.sprite })
+    }
 
     addItem(item) {
         if (this.items.length >= this.maxSize) return // skip if full inventory
-        const spr = new Sprite('tool', 3, 2, false)
-        this.itemSprites.push(spr)
         this.items.push(item)
     }
 
@@ -69,7 +72,6 @@ export class Inventory extends ObjectClass {
                     this.items[i].quantity -= 1
                 else {
                     this.items.splice(i, 1)
-                    this.itemSprites.splice(i, 1)
                 }
                 break
             }

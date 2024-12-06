@@ -32,8 +32,6 @@ export class ObjectsMap {
         const width1 = mask?.width || object.width
         const height1 = mask?.height || object.height
 
-
-
         const x2 = object2.x;
         const y2 = object2.y;
         const width2 = object2.width;
@@ -149,7 +147,6 @@ export class ObjectsMap {
 
             const yA = a.obj.y + (maskA?.y || 0)
             const yB = b.obj.y + (maskB?.y || 0)
-
 
             return yA - yB
         })

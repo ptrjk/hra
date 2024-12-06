@@ -33,6 +33,7 @@ export class Player extends ObjectClass {
     }
 
     _registerEvents() {
+        this.sprite.stopAnimationInterval()
         window.addEventListener("keydown", (event) => {
             this.keys[event.key.toLowerCase()] = true
             this.sprite.startAnimationInterval()
@@ -72,7 +73,6 @@ export class Player extends ObjectClass {
             if (!collisions.checkCollision({ ...this, y: this.y - 1 })) {
                 this.tempy -= this.speed
                 this.y = Math.floor(this.tempy)
-
             }
 
             this.rotation = 1
@@ -81,7 +81,6 @@ export class Player extends ObjectClass {
             if (!collisions.checkCollision({ ...this, x: this.x - 1 })) {
                 this.tempx -= this.speed
                 this.x = Math.floor(this.tempx)
-                // camera.x = -this.x + 50
             }
             this.rotation = 2
         }
@@ -98,7 +97,6 @@ export class Player extends ObjectClass {
             if (!collisions.checkCollision({ ...this, x: this.x + 1 })) {
                 this.tempx += this.speed
                 this.x = Math.floor(this.tempx)
-                // camera.x = -this.x + 50
             }
         }
         camera.x = Math.max(0, Math.min(this.x - camera.width / 5 / 2, 2000 - camera.width));
@@ -107,7 +105,6 @@ export class Player extends ObjectClass {
 
     chopTree() {
         const object = pointer.pointing
-        console.log(object)
         if (object === null || !object instanceof Tree) return
 
         const dx = (object.x + object.width / 2) - (this.x + this.collisionMask.x)

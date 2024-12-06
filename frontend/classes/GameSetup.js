@@ -6,6 +6,7 @@ import { Player } from "./Player.js";
 import { Tree } from './Tree.js';
 import { Axe } from "./Axe.js";
 import Camera from "./Camera.js";
+import { Hoe } from "./Hoe.js";
 
 const canvas = document.getElementById('game-canvas');
 canvas.width = 1920;
@@ -23,16 +24,10 @@ export const bg = new Background()
 bg.generateMap()
 export const inventory = new Inventory()
 
-const img = new Image()
-img.src = 'assets/testplayer.png'
-let can = false
-
-img.onload = () => {
-    can = true
-}
-
 const tree = new Tree(64, 32)
 const axe = new Axe(100, 50)
+const hoe = new Hoe(140, 50)
+
 const player = new Player(50, 50)
 
 export const camera = new Camera(canvas.width, canvas.height)
@@ -63,14 +58,10 @@ export class GameSetup {
     drawAll(fps) {
         ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-        if (!can) return
-
-
         bg.drawMap(ctx)
         collisions.drawAll(ctx)
         inventory.draw(ctx)
         pointer.draw(ctx)
-        ctx.drawImage(img, 59, 50)
     }
 
 }
