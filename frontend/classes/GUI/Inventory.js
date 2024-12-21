@@ -1,9 +1,10 @@
 
-import { Sprite } from "./Sprite.js"
-import { collisions } from "./GameSetup.js"
-import { Axe } from "./Axe.js"
-import { ObjectClass } from "./ObjectClass.js"
-import { Hoe } from "./Hoe.js"
+import { Sprite } from "../sprite.js"
+import { collisions } from "../utils/GameSetup.js"
+import { Axe } from "../Axe.js"
+import { ObjectClass } from "../ObjectClass.js"
+import { Hoe } from "../Hoe.js"
+import { Seed_Wheat } from "../Seed_wheat.js"
 
 export class Inventory extends ObjectClass {
     constructor(x = 160 - (96 + 6) / 2, y = 150) {
@@ -32,11 +33,11 @@ export class Inventory extends ObjectClass {
             else
                 drawingSprite = this.sprite
 
-            drawingSprite.drawStatic(ctx, this.x + 24 * i + (2 * i), this.y, this.soffsetX, this.soffsetY)
+            drawingSprite.drawStatic(ctx, this.x + 24 * i + (2 * i), this.y, this.soffsetX, this.soffsetY, 0, 0, 1, true)
         }
 
         this.items.forEach((item, index) => {
-            item.sprite.drawStatic(ctx, (this.x + 4) + 24 * index + 2 * index, this.y + 4, item.soffsetX, item.soffsetY, 0, 0, 1)
+            item.sprite.drawStatic(ctx, (this.x + 4) + 24 * index + 2 * index, this.y + 4, item.soffsetX, item.soffsetY, 0, 0, 1, true)
         })
     }
 
@@ -44,7 +45,7 @@ export class Inventory extends ObjectClass {
         const objects = collisions.getClosestObjectsList(player, 20)
 
         const pickableIndex = objects.findIndex((item) => {
-            if (item instanceof Axe || item instanceof Hoe) return true
+            if (item instanceof Axe || item instanceof Hoe || item instanceof Seed_Wheat) return true
         })
 
         if (pickableIndex === -1) return
@@ -56,8 +57,10 @@ export class Inventory extends ObjectClass {
 
         if (item instanceof Axe)
             this.addItem({ name: 'axe', quantity: 1, soffsetX: item.soffsetX, soffsetY: item.soffsetY, sprite: item.sprite })
-        if (item instanceof Hoe)
+        else if (item instanceof Hoe)
             this.addItem({ name: 'hoe', quantity: 1, soffsetX: item.soffsetX, soffsetY: item.soffsetY, sprite: item.sprite })
+        else if (item instanceof Seed_Wheat)
+            this.addItem({ name: 'seed_wheat', quantity: 1, soffsetX: item.soffsetX, soffsetY: item.soffsetY, sprite: item.sprite })
     }
 
     addItem(item) {

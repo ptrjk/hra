@@ -1,4 +1,4 @@
-import { collisions } from "./GameSetup.js"
+import { collisions } from "./utils/GameSetup.js"
 import { ObjectClass } from "./ObjectClass.js"
 
 export class Axe extends ObjectClass {

@@ -1,8 +1,9 @@
-import { Sprite } from "./Sprite.js"
-import { camera, collisions, pointer } from "./GameSetup.js"
-import { inventory } from "./GameSetup.js"
+import { Sprite } from "./sprite.js"
+import { inventory, camera, collisions, pointer } from "./utils/GameSetup.js"
 import { ObjectClass } from "./ObjectClass.js"
 import { Tree } from "./Tree.js"
+import { PlantTile } from "./PlantTile.js"
+import { Wheat } from "./Wheat.js"
 
 export class Player extends ObjectClass {
     constructor(x, y) {
@@ -28,6 +29,8 @@ export class Player extends ObjectClass {
         this.updatePosition()
         if (this.action == 'axe')
             this.spriteAction.drawAnimation(ctx, Math.round(this.x), Math.round(this.y), 4 + this.rotation)
+        else if (this.action == 'hoe')
+            this.spriteAction.drawAnimation(ctx, Math.round(this.x), Math.round(this.y), this.rotation)
         else
             this.sprite.drawAnimation(ctx, Math.round(this.x), Math.round(this.y), this.rotation)
     }
@@ -37,22 +40,6 @@ export class Player extends ObjectClass {
         window.addEventListener("keydown", (event) => {
             this.keys[event.key.toLowerCase()] = true
             this.sprite.startAnimationInterval()
-
-            if (event.key === ' ') {
-                const item = inventory.getSelectedSlotItem()
-                if (!item || item.name !== 'axe' || this.action !== null) {
-                    return
-                }
-                this.action = 'axe'
-                this.spriteAction.stopAnimationInterval()
-                this.spriteAction.startAnimationInterval()
-                this.chopTree()
-
-
-                setTimeout(() => {
-                    this.action = null
-                }, 400)
-            }
 
             if (event.key.toLowerCase() === 'e') {
                 inventory.pickupItem(this)
@@ -64,6 +51,43 @@ export class Player extends ObjectClass {
             if (!Object.values(this.keys).some((val) => val === true))
                 this.sprite.stopAnimationInterval()
         });
+
+        window.addEventListener("mousedown", (_) => {
+            const item = inventory.getSelectedSlotItem()
+            if (!item || this.action !== null)
+                return
+
+            if (item.name === 'axe') {
+                this.action = 'axe'
+                this.spriteAction.stopAnimationInterval()
+                this.spriteAction.startAnimationInterval()
+                this.chopTree()
+            }
+            else if (item.name === 'hoe') {
+                if (collisions.tileMap.has(`${pointer.x / 16},${pointer.y / 16}`))
+                    return
+
+                const plant = new PlantTile(pointer.x, pointer.y)
+                collisions.tileMap.set(`${pointer.x / 16},${pointer.y / 16}`, plant);
+                collisions.tileMap.forEach((value, key) => {
+                    value.calculateBitmask(collisions.tileMap)
+                })
+                this.action = 'hoe'
+
+                this.spriteAction.stopAnimationInterval()
+                this.spriteAction.startAnimationInterval()
+            }
+            else if (item.name = 'seed_wheat') {
+                if (!collisions.tileMap.has(`${pointer.x / 16},${pointer.y / 16}`))
+                    //|| collisions.checkCollision({ x: pointer.x, y: pointer.y, width: 16, height: 16 }))
+                    return
+
+                const wheat = new Wheat(pointer.x, pointer.y)
+            }
+            setTimeout(() => {
+                this.action = null
+            }, 400)
+        })
     }
 
     updatePosition() {

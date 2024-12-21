@@ -1,7 +1,7 @@
-import { Sprite } from "./Sprite.js"
-import { collisions } from "./GameSetup.js"
-import { Tree } from "./Tree.js"
-import { ObjectClass } from "./ObjectClass.js"
+import { Sprite } from "../sprite.js"
+import { collisions } from "../utils/GameSetup.js"
+import { Tree } from "../Tree.js"
+import { ObjectClass } from "../ObjectClass.js"
 
 export class Pointer extends ObjectClass {
     constructor(x, y) {
@@ -23,13 +23,14 @@ export class Pointer extends ObjectClass {
     }
 
     draw(ctx) {
+
+        console.log(this.x, this.y, this.tempx, this.tempy)
         if (!this.visibility) return
         this.p1.drawStatic(ctx, this.tempx, this.tempy, this.soffsetX, this.soffsetY)
         // - 3 pretoze pointer je 3x3
         this.p2.drawStatic(ctx, this.tempx + this.width - 3, this.tempy, this.soffsetX, this.soffsetY)
         this.p3.drawStatic(ctx, this.tempx + this.width - 3, this.tempy + this.height - 3, this.soffsetX, this.soffsetY)
         this.p4.drawStatic(ctx, this.tempx, this.tempy + this.height - 3, this.soffsetX, this.soffsetY)
-
     }
 
     updatePosition(x, y) {
@@ -38,11 +39,14 @@ export class Pointer extends ObjectClass {
         this.tempx = x
         this.tempy = y
 
+
         const objects = collisions.getObjectsInRange(this, 0)
 
         const res = objects.find((obj) => {
             return obj.obj instanceof Tree
         })
+
+        // when pointing on tree, pointer will be larger
         if (res && !res.obj.chopped) {
             this.width = 32
             this.height = 32

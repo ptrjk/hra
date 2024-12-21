@@ -1,5 +1,5 @@
 
-import { GameSetup } from './classes/GameSetup.js';
+import { GameSetup } from './classes/utils/GameSetup.js';
 
 
 

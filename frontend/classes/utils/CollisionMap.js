@@ -4,6 +4,7 @@ export class ObjectsMap {
 
     constructor() {
         this.objectList = []
+        this.tileMap = new Map();
     }
 
 
@@ -150,7 +151,7 @@ export class ObjectsMap {
 
             return yA - yB
         })
-
+        this.tileMap.forEach((item) => item.draw(ctx))
         this.objectList.forEach((item) => item.obj.draw(ctx))
     }
 }

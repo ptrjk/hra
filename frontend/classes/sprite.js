@@ -1,4 +1,4 @@
-import { camera } from "./GameSetup.js"
+import { camera } from "./utils/GameSetup.js"
 
 export class Sprite {
     constructor(name, numOfTilesX = 1, numOfTilesY = 1, staticSprite = false, repeat = true) {
@@ -58,7 +58,10 @@ export class Sprite {
         }
     }
 
-    drawStatic(ctx, x, y, tileIndexX, tileIndexY, width = 0, height = 0, scale = 1) {
+    /*
+    staticCamera - when its true, it ignores camera movement. (used for GUI)
+    */
+    drawStatic(ctx, x, y, tileIndexX, tileIndexY, width = 0, height = 0, scale = 1, staticCamera = false) {
         if (this.isLoaded) {
             let imageWidth = this.image.width
             let imageHeight = this.image.height
@@ -69,13 +72,16 @@ export class Sprite {
             let cx = tileWidth * tileIndexX
             let cy = tileHeight * tileIndexY
 
-            this._drawSprite(ctx, x, y, cx, cy, tileWidth + width, tileHeight + height, scale)
+            this._drawSprite(ctx, x, y, cx, cy, tileWidth + width, tileHeight + height, scale, staticCamera)
         }
     }
 
-    _drawSprite(ctx, x, y, sx = 0, sy = 0, width = null, height = null, scale = 1) {
+    _drawSprite(ctx, x, y, sx = 0, sy = 0, width = null, height = null, scale = 1, staticCamera) {
         width = width ? width : this.image.width
         height = height ? height : this.image.height
-        ctx.drawImage(this.image, sx, sy, width, height, x - camera.x, y - camera.y, scale * width, scale * height)
+        if (!staticCamera)
+            ctx.drawImage(this.image, sx, sy, width, height, x - camera.x, y - camera.y, scale * width, scale * height)
+        else
+            ctx.drawImage(this.image, sx, sy, width, height, x, y, scale * width, scale * height)
     }
 }
