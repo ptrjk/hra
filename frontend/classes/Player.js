@@ -67,6 +67,8 @@ export class Player extends ObjectClass {
                 if (collisions.tileMap.has(`${pointer.x / 16},${pointer.y / 16}`))
                     return
 
+                if (pointer.pointingBlock.sprite.name === "water") return
+
                 const plant = new PlantTile(pointer.x, pointer.y)
                 collisions.tileMap.set(`${pointer.x / 16},${pointer.y / 16}`, plant)
                 collisions.tileMap.forEach((value, key) => {

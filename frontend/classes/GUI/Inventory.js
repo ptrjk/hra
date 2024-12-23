@@ -51,8 +51,8 @@ export class Inventory extends ObjectClass {
         if (pickableIndex === -1) return
 
         const item = objects[pickableIndex].obj
-        collisions.removeObject(item.id)
 
+        item.pickUpEffect(player)
 
         if (item instanceof Axe)
             this.addItem({ name: 'axe', quantity: 1, soffsetX: item.soffsetX, soffsetY: item.soffsetY, sprite: item.sprite })
