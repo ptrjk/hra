@@ -68,7 +68,7 @@ export class Player extends ObjectClass {
                     return
 
                 const plant = new PlantTile(pointer.x, pointer.y)
-                collisions.tileMap.set(`${pointer.x / 16},${pointer.y / 16}`, plant);
+                collisions.tileMap.set(`${pointer.x / 16},${pointer.y / 16}`, plant)
                 collisions.tileMap.forEach((value, key) => {
                     value.calculateBitmask(collisions.tileMap)
                 })

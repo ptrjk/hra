@@ -4,18 +4,18 @@ export class ObjectsMap {
 
     constructor() {
         this.objectList = []
-        this.tileMap = new Map();
+        this.tileMap = new Map() // Only test var. Used only for PlantTiles
     }
 
-
+    // Adds a object to a objectList
     addObject(object, useCollision = true) {
         this.objectList.push({
             collision: useCollision,
             obj: object
         })
-        console.log(this.objectList)
     }
 
+    // Removes object from a objectList
     removeObject(id) {
         for (let i = 0; i < this.objectList.length; i++) {
             if (this.objectList[i].obj.id === id) {
@@ -25,6 +25,7 @@ export class ObjectsMap {
         }
     }
 
+    // Check if two objects are colliding
     isColliding(object, object2) {
         const mask = object.collisionMask;
 
@@ -85,7 +86,8 @@ export class ObjectsMap {
         return collision
     }
 
-    /// Returns a list of object in player radius.
+    // Returns a list of object in player radius.
+    // Returns a object in style {collision: true, obj: object}
     getObjectsInRange(object, radius = 0) {
         let objectsInRange = []
         this.objectList.forEach((objectOther) => {
@@ -106,6 +108,7 @@ export class ObjectsMap {
         return Math.sqrt((centerX1 - centerX2) ** 2 + (centerY1 - centerY2) ** 2);
     }
 
+    // Return 1 closest object to player from list of objects in player radius
     getClosestObject(object, radius = 0) {
         const objects = this.getObjectsInRange(object, radius)
 
@@ -127,18 +130,18 @@ export class ObjectsMap {
         return closestObject
     }
 
-    getClosestObjectsList(object, radius = 0) {
-        const objects = this.getObjectsInRange(object, radius)
-        let closestObjects = []
+    // getClosestObjectsList(object, radius = 0) {
+    //     const objects = this.getObjectsInRange(object, radius)
+    //     let closestObjects = []
 
-        objects.forEach((item) => {
-            const res = this.calculateDistance(object, item.obj)
-            if (res <= radius) {
-                closestObjects.push(item.obj)
-            }
-        })
-        return closestObjects
-    }
+    //     objects.forEach((item) => {
+    //         const res = this.calculateDistance(object, item.obj)
+    //         if (res <= radius) {
+    //             closestObjects.push(item.obj)
+    //         }
+    //     })
+    //     return closestObjects
+    // }
 
     drawAll(ctx) {
         // neskor spravit sortovanie len pri player pohybe

@@ -45,17 +45,17 @@ export class Sprite {
     Draw method
     */
     drawAnimation(ctx, x, y, tileIndex) {
-        if (this.isLoaded) {
-            let imageWidth = this.image.width
-            let imageHeight = this.image.height
+        if (!this.isLoaded) return
 
-            let tileWidth = imageWidth / this.numOfTilesX
-            let tileHeight = imageHeight / this.numOfTilesY
+        let imageWidth = this.image.width
+        let imageHeight = this.image.height
 
-            let cx = tileWidth * this.currentFrame
-            let cy = tileHeight * tileIndex
-            this._drawSprite(ctx, x, y, cx, cy, tileWidth, tileHeight)
-        }
+        let tileWidth = imageWidth / this.numOfTilesX
+        let tileHeight = imageHeight / this.numOfTilesY
+
+        let cx = tileWidth * this.currentFrame
+        let cy = tileHeight * tileIndex
+        this._drawSprite(ctx, x, y, cx, cy, tileWidth, tileHeight)
     }
 
     /*

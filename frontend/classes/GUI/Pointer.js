@@ -1,7 +1,13 @@
 import { Sprite } from "../sprite.js"
-import { collisions } from "../utils/GameSetup.js"
+import { bg, collisions } from "../utils/GameSetup.js"
 import { Tree } from "../Tree.js"
 import { ObjectClass } from "../ObjectClass.js"
+
+/*
+tempx and tempy is same as x,y, but when player hover on some object for ex. tree, tempx will increases 
+according to the size of the object (tree)
+*/
+
 
 export class Pointer extends ObjectClass {
     constructor(x, y) {
@@ -9,7 +15,8 @@ export class Pointer extends ObjectClass {
         this.tempX = x
         this.tempY = y
         this.visibility = true
-        this.pointing = null
+        this.pointing = null // set object that pointer is pointing too, but only from collisionmap class. (not background)
+        this.pointingBlock = null // set object that pointer is pointing too, but only background tiles.
         this.p1 = new Sprite('p1', this.offsetX, this.offsetY, false)
         this.p2 = new Sprite('p2', this.offsetX, this.offsetY, false)
         this.p3 = new Sprite('p3', this.offsetX, this.offsetY, false)
@@ -23,8 +30,6 @@ export class Pointer extends ObjectClass {
     }
 
     draw(ctx) {
-
-        console.log(this.x, this.y, this.tempx, this.tempy)
         if (!this.visibility) return
         this.p1.drawStatic(ctx, this.tempx, this.tempy, this.soffsetX, this.soffsetY)
         // - 3 pretoze pointer je 3x3
@@ -33,12 +38,14 @@ export class Pointer extends ObjectClass {
         this.p4.drawStatic(ctx, this.tempx, this.tempy + this.height - 3, this.soffsetX, this.soffsetY)
     }
 
+
     updatePosition(x, y) {
         this.x = x
         this.y = y
         this.tempx = x
         this.tempy = y
 
+        this.searchBackgroundTile()
 
         const objects = collisions.getObjectsInRange(this, 0)
 
@@ -59,5 +66,12 @@ export class Pointer extends ObjectClass {
             this.height = 16
             this.pointing = null
         }
+    }
+
+    // Only test method, later transform it into CollisionMap method
+    searchBackgroundTile() {
+        bg.listOfTiles.forEach(element => {
+            if (element.x === this.x && element.y === this.y) this.pointingBlock = element
+        })
     }
 }

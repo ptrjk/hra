@@ -42,18 +42,17 @@ export class Inventory extends ObjectClass {
     }
 
     pickupItem(player) {
-        const objects = collisions.getClosestObjectsList(player, 20)
-
-        const pickableIndex = objects.findIndex((item) => {
+        const objects = collisions.getObjectsInRange(player, 20)
+        const pickableIndex = objects.findIndex((o) => {
+            let item = o.obj
             if (item instanceof Axe || item instanceof Hoe || item instanceof Seed_Wheat) return true
         })
 
         if (pickableIndex === -1) return
 
-        const item = objects[pickableIndex]
+        const item = objects[pickableIndex].obj
         collisions.removeObject(item.id)
 
-        console.log(item)
 
         if (item instanceof Axe)
             this.addItem({ name: 'axe', quantity: 1, soffsetX: item.soffsetX, soffsetY: item.soffsetY, sprite: item.sprite })

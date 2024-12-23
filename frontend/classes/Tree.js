@@ -1,5 +1,6 @@
 import { collisions } from "./utils/GameSetup.js"
 import { ObjectClass } from "./ObjectClass.js"
+import { Sprite } from "./sprite.js"
 
 export class Tree extends ObjectClass {
     constructor(x, y) {
@@ -7,16 +8,29 @@ export class Tree extends ObjectClass {
         collisions.addObject(this, true)
         this.chopped = false
         this.lives = 3
+        this.spriteAction = new Sprite('tree_animation', 5, 1, false, false)
+        this.action = null
     }
 
     draw(ctx) {
-        this.sprite.drawStatic(ctx, this.x, this.y, this.soffsetX, this.soffsetY, this.width / 2, this.height / 2, true)
+        if (this.action === null)
+            this.sprite.drawStatic(ctx, this.x, this.y, this.soffsetX, this.soffsetY, this.width / 2, this.height / 2, true)
+        else if (this.action === 'chopping')
+            this.spriteAction.drawAnimation(ctx, this.x, this.y, 0)
     }
 
     chopTree() {
         if (this.chopped) return
         if (this.lives > 1) {
             this.lives -= 1
+            this.action = "chopping"
+            this.spriteAction.animationSpeed = 100
+            this.spriteAction.stopAnimationInterval()
+            this.spriteAction.startAnimationInterval()
+
+            setTimeout(() => {
+                this.action = null
+            }, 500)
             return
         }
         this.soffsetX = 4
