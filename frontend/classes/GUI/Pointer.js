@@ -2,6 +2,7 @@ import { Sprite } from "../sprite.js"
 import { bg, collisions } from "../utils/GameSetup.js"
 import { Tree } from "../Tree.js"
 import { ObjectClass } from "../ObjectClass.js"
+import { WheatBlock } from "../WheatBlock.js"
 
 /*
 tempx and tempy is same as x,y, but when player hover on some object for ex. tree, tempx will increases 
@@ -49,22 +50,21 @@ export class Pointer extends ObjectClass {
 
         const objects = collisions.getObjectsInRange(this, 0)
 
-        const res = objects.find((obj) => {
-            return obj.obj instanceof Tree
-        })
+        this.width = 16
+        this.height = 16
+        this.pointing = null
 
-        // when pointing on tree, pointer will be larger
-        if (res && !res.obj.chopped) {
-            this.width = 32
-            this.height = 32
-            this.tempx = res.obj.x
-            this.tempy = res.obj.y
-            this.pointing = res.obj
-        }
-        else {
-            this.width = 16
-            this.height = 16
-            this.pointing = null
+        for (let object of objects) {
+            if (object.obj instanceof Tree && !object.obj.chopped) {
+                this.width = 32
+                this.height = 32
+                this.tempx = object.obj.x
+                this.tempy = object.obj.y
+                this.pointing = object.obj
+            }
+            else if (object.obj instanceof WheatBlock) {
+                this.pointing = object.obj
+            }
         }
     }
 

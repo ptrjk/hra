@@ -27,27 +27,29 @@ export class ObjectsMap {
 
     // Check if two objects are colliding
     isColliding(object, object2) {
-        const mask = object.collisionMask;
+        const mask = object.collisionMask
 
         const x1 = object.x + (mask?.x || 0)
         const y1 = object.y + (mask?.y || 0)
         const width1 = mask?.width || object.width
         const height1 = mask?.height || object.height
 
-        const x2 = object2.x;
-        const y2 = object2.y;
-        const width2 = object2.width;
-        const height2 = object2.height;
+        const x2 = object2.x
+        const y2 = object2.y
+        const width2 = object2.width
+        const height2 = object2.height
+
+        if (x1 === x2 && y1 === y2) return true
 
         if (
-            x1 + width1 > x2 &&
-            x1 < x2 + width2 &&
-            y1 + height1 > y2 &&
-            y1 < y2 + height2
+            x1 + width1 >= x2 &&
+            x1 <= x2 + width2 &&
+            y1 + height1 >= y2 &&
+            y1 <= y2 + height2
         ) {
-            return true;
+            return true
         }
-        return false;
+        return false
     }
 
     isInRange(object, object2, radius = 20) {
@@ -63,22 +65,27 @@ export class ObjectsMap {
         const width2 = object2.width;
         const height2 = object2.height;
 
+
+        if (x1 === x2 && y1 === y2) return true
+
         if (
             x1 + width1 > x2 &&
             x1 < x2 + width2 &&
             y1 + height1 > y2 &&
             y1 < y2 + height2
         ) {
-            return true;
+            return true
         }
-        return false;
+        return false
     }
 
-    checkCollision(object) {
-        // ptm kontrolovat na zaklade id
+    // ignoreCollide - if enabled, it will check even object that has collision: false
+    checkCollision(object, ignoreCollide = false) {
         let collision = false
         this.objectList.forEach((objectOther) => {
-            if (object.id === objectOther.obj.id || objectOther.collision === false || collision === true)
+            if (object.id === objectOther.obj.id || collision === true)
+                return
+            if (ignoreCollide === false && objectOther.collision === false)
                 return
             if (this.isColliding(object, objectOther.obj) === true)
                 collision = true

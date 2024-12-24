@@ -8,10 +8,12 @@ export class Item extends ObjectClass {
         super(x, y, soffsetX, soffsetY, offsetX, offsetY, width, height, animation, spriteName, 1)
         this.floatingInterval = null
         this.player = null
-        this.pickUp = false
         this.progress = 0
         collisions.addObject(this, false)
-        this.floatEffect()
+        //this.floatEffect()
+        this.dropx = null
+        this.dropy = null
+        this.action = "drop"
     }
 
     floatEffect() {
@@ -33,35 +35,73 @@ export class Item extends ObjectClass {
 
     _updatePosition() {
         if (this.player) {
-            const speed = 0.7
-            const hillHeight = 0.5
-            const dx = this.player.x + this.player.width / 2 - this.x // Distance in x
-            const dy = this.player.y + this.player.height / 2 - this.y // Distance in y
-            const distance = Math.sqrt(dx * dx + dy * dy) // Total distance to player
-
-            if (distance < 1) {
+            this.jumpEffectFunction(this.player.x + this.player.width / 2, this.player.y + this.player.height / 2, () => {
                 this.player = null
-                this.pickUp = true
-            }
+                this.action = "pickup"
+            })
+            // const speed = 0.7
+            // const hillHeight = 0.5
+            // const dx = this.player.x + this.player.width / 2 - this.x // Distance in x
+            // const dy = this.player.y + this.player.height / 2 - this.y // Distance in y
+            // const distance = Math.sqrt(dx * dx + dy * dy) // Total distance to player
 
-            const nx = dx / distance // Normalized x direction
-            const ny = dy / distance // Normalized y direction
+            // if (distance < 1) {
+            //     this.player = null
+            //     this.action = "pickup"
+            // }
 
-            this.progress = Math.min(this.progress + speed / distance, 1)
+            // const nx = dx / distance // Normalized x direction
+            // const ny = dy / distance // Normalized y direction
 
-            const hillEffect = hillHeight * (1 - (this.progress - 0.5) ** 2 * 4)
+            // this.progress = Math.min(this.progress + speed / distance, 1)
 
-            this.x += nx * speed
-            this.y += ny * speed - hillEffect * Math.abs(nx)
+            // const hillEffect = hillHeight * (1 - (this.progress - 0.5) ** 2 * 4)
+
+            // this.x += nx * speed
+            // this.y += ny * speed - hillEffect * Math.abs(nx)
         }
-        else if (this.pickUp) {
+        else if (this.action === "pickup") {
             if (this.scale > 0.2)
                 this.scale -= 0.03
             else {
-                this.pickUp = false
+                this.action = null
                 collisions.removeObject(this.id)
             }
         }
+        else if (this.action === "drop") {
+            if (!this.dropx) {
+                let r = Math.floor(Math.random() * 21) - 10
+                if (r === 0) r += 1
+                this.dropx = this.x + r
+            }
+            if (!this.dropy) this.dropy = this.y
+            this.jumpEffectFunction(this.dropx, this.dropy, () => {
+                this.action = null
+            })
+        }
+    }
+
+    jumpEffectFunction(targetX, targetY, callbackFn) {
+        const speed = 0.7
+        const hillHeight = 2
+        const dx = targetX - this.x // Distance in x
+        const dy = targetY - this.y // Distance in y
+        const distance = Math.sqrt(dx * dx + dy * dy) // Total distance to player
+
+        if (distance < 1) {
+            callbackFn()
+            this.progress = 0
+        }
+
+        const nx = dx / distance // Normalized x direction
+        const ny = dy / distance // Normalized y direction
+
+        this.progress = Math.min(this.progress + speed / distance, 1)
+
+        const hillEffect = hillHeight * (1 - (this.progress - 0.5) ** 2 * 4)
+
+        this.x += nx * speed
+        this.y += ny * speed - hillEffect * Math.abs(nx)
     }
 
     draw(ctx) {

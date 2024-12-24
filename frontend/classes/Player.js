@@ -3,7 +3,8 @@ import { inventory, camera, collisions, pointer } from "./utils/GameSetup.js"
 import { ObjectClass } from "./ObjectClass.js"
 import { Tree } from "./Tree.js"
 import { PlantTile } from "./PlantTile.js"
-import { Wheat } from "./Wheat.js"
+import { WheatBlock } from "./WheatBlock.js"
+import { WheatItem } from "./WheatItem.js"
 
 export class Player extends ObjectClass {
     constructor(x, y) {
@@ -53,38 +54,48 @@ export class Player extends ObjectClass {
         });
 
         window.addEventListener("mousedown", (_) => {
-            const item = inventory.getSelectedSlotItem()
-            if (!item || this.action !== null)
-                return
-
-            if (item.name === 'axe') {
-                this.action = 'axe'
-                this.spriteAction.stopAnimationInterval()
-                this.spriteAction.startAnimationInterval()
-                this.chopTree()
-            }
-            else if (item.name === 'hoe') {
-                if (collisions.tileMap.has(`${pointer.x / 16},${pointer.y / 16}`))
+            const performActions = () => {
+                const item = inventory.getSelectedSlotItem()
+                if (!item || this.action !== null)
                     return
 
-                if (pointer.pointingBlock.sprite.name === "water") return
+                if (item.name === 'axe') {
+                    this.action = 'axe'
+                    this.spriteAction.stopAnimationInterval()
+                    this.spriteAction.startAnimationInterval()
+                    this.chopTree()
+                }
+                else if (item.name === 'hoe') {
+                    if (collisions.tileMap.has(`${pointer.x / 16},${pointer.y / 16}`))
+                        return
 
-                const plant = new PlantTile(pointer.x, pointer.y)
-                collisions.tileMap.set(`${pointer.x / 16},${pointer.y / 16}`, plant)
-                collisions.tileMap.forEach((value, key) => {
-                    value.calculateBitmask(collisions.tileMap)
-                })
-                this.action = 'hoe'
+                    if (pointer.pointingBlock.sprite.name === "water") return
 
-                this.spriteAction.stopAnimationInterval()
-                this.spriteAction.startAnimationInterval()
+                    const plant = new PlantTile(pointer.x, pointer.y)
+                    collisions.tileMap.set(`${pointer.x / 16},${pointer.y / 16}`, plant)
+                    collisions.tileMap.forEach((value, key) => {
+                        value.calculateBitmask(collisions.tileMap)
+                    })
+                    this.action = 'hoe'
+
+                    this.spriteAction.stopAnimationInterval()
+                    this.spriteAction.startAnimationInterval()
+                }
+                else if (item.name = 'seed_wheat') {
+                    if (!collisions.tileMap.has(`${pointer.x / 16},${pointer.y / 16}`))
+                        return
+
+                    if (!collisions.checkCollision({ x: pointer.x, y: pointer.y }, true))
+                        new WheatBlock(pointer.x, pointer.y)
+                }
             }
-            else if (item.name = 'seed_wheat') {
-                if (!collisions.tileMap.has(`${pointer.x / 16},${pointer.y / 16}`))
-                    //|| collisions.checkCollision({ x: pointer.x, y: pointer.y, width: 16, height: 16 }))
-                    return
+            performActions()
 
-                const wheat = new Wheat(pointer.x, pointer.y)
+            // harvest wheat
+            if (pointer.pointing instanceof WheatBlock && pointer.pointing.harvest) {
+                collisions.removeObject(pointer.pointing.id)
+                new WheatItem(pointer.pointing.x, pointer.pointing.y)
+                pointer.pointing = null
             }
             setTimeout(() => {
                 this.action = null
@@ -131,7 +142,10 @@ export class Player extends ObjectClass {
 
     chopTree() {
         const object = pointer.pointing
-        if (object === null || !object instanceof Tree) return
+        if (object === null || !(object instanceof Tree)) return
+
+        console.log("e")
+        console.log(object)
 
         const dx = (object.x + object.width / 2) - (this.x + this.collisionMask.x)
         const dy = (object.y + object.height / 2) - (this.y + this.collisionMask.y)

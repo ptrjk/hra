@@ -9,7 +9,7 @@ import Camera from "./Camera.js";
 import { Hoe } from "../Hoe.js";
 import { Seed_Wheat } from "../Seed_wheat.js";
 import { PlantTile } from "../PlantTile.js";
-import { Wheat } from "../Wheat.js";
+import { WheatBlock } from "../WheatBlock.js";
 
 const canvas = document.getElementById('game-canvas');
 checkPixels()
@@ -33,7 +33,7 @@ const axe = new Axe(100, 50)
 const hoe = new Hoe(140, 50)
 const seedwheat = new Seed_Wheat(100, 70)
 const planttile = new PlantTile(32, 32)
-const wheat = new Wheat(32, 32)
+const wheat = new WheatBlock(32, 32)
 
 
 const player = new Player(50, 50)
@@ -44,6 +44,7 @@ let zoomFactor = 2.8
 
 
 canvas.addEventListener("wheel", (event) => {
+    return
     event.preventDefault()
     if (event.deltaY < 0) {
         zoomFactor *= 1.1 // Zoom in
@@ -51,7 +52,7 @@ canvas.addEventListener("wheel", (event) => {
         zoomFactor /= 1.1 // Zoom out
     }
     setCamera()
-});
+})
 
 function setCamera() {
     ctx.setTransform(zoomFactor, 0, 0, zoomFactor, 0, 0)
@@ -71,8 +72,6 @@ export class GameSetup {
         collisions.drawAll(ctx)
         inventory.draw(ctx)
         pointer.draw(ctx)
-
-
 
         //checkPixels(); // Now you should see non-zero RGB values
 

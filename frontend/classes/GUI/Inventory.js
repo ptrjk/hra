@@ -5,6 +5,7 @@ import { Axe } from "../Axe.js"
 import { ObjectClass } from "../ObjectClass.js"
 import { Hoe } from "../Hoe.js"
 import { Seed_Wheat } from "../Seed_wheat.js"
+import { WheatItem } from "../WheatItem.js"
 
 export class Inventory extends ObjectClass {
     constructor(x = 160 - (96 + 6) / 2, y = 150) {
@@ -45,12 +46,14 @@ export class Inventory extends ObjectClass {
         const objects = collisions.getObjectsInRange(player, 20)
         const pickableIndex = objects.findIndex((o) => {
             let item = o.obj
-            if (item instanceof Axe || item instanceof Hoe || item instanceof Seed_Wheat) return true
+            if (item instanceof Axe || item instanceof Hoe || item instanceof Seed_Wheat || item instanceof WheatItem) return true
         })
 
         if (pickableIndex === -1) return
 
         const item = objects[pickableIndex].obj
+
+        if (item.action != null || item.player) return
 
         item.pickUpEffect(player)
 
@@ -60,6 +63,8 @@ export class Inventory extends ObjectClass {
             this.addItem({ name: 'hoe', quantity: 1, soffsetX: item.soffsetX, soffsetY: item.soffsetY, sprite: item.sprite })
         else if (item instanceof Seed_Wheat)
             this.addItem({ name: 'seed_wheat', quantity: 1, soffsetX: item.soffsetX, soffsetY: item.soffsetY, sprite: item.sprite })
+        else if (item instanceof WheatItem)
+            this.addItem({ name: 'wheat_item', quantity: 1, soffsetX: item.soffsetX, soffsetY: item.soffsetY, sprite: item.sprite })
     }
 
     addItem(item) {
