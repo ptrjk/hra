@@ -61,11 +61,13 @@ export class Item extends ObjectClass {
             // this.y += ny * speed - hillEffect * Math.abs(nx)
         }
         else if (this.action === "pickup") {
-            if (this.scale > 0.2)
-                this.scale -= 0.03
+            if (this.scale > 0.8)
+                this.scale -= 0.01
             else {
-                this.action = null
+                console.log("removing " + this.id)
                 collisions.removeObject(this.id)
+ 
+                this.action = null
             }
         }
         else if (this.action === "drop") {

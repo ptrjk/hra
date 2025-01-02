@@ -45,6 +45,9 @@ export class Player extends ObjectClass {
             if (event.key.toLowerCase() === 'e') {
                 inventory.pickupItem(this)
             }
+            if (event.key === 'x') {
+                console.log(collisions.objectList)
+            }
         });
 
         window.addEventListener("keyup", (event) => {
@@ -94,7 +97,8 @@ export class Player extends ObjectClass {
             // harvest wheat
             if (pointer.pointing instanceof WheatBlock && pointer.pointing.harvest) {
                 collisions.removeObject(pointer.pointing.id)
-                new WheatItem(pointer.pointing.x, pointer.pointing.y)
+                const wheatt = new WheatItem(pointer.pointing.x, pointer.pointing.y)
+                console.log(wheatt)
                 pointer.pointing = null
             }
             setTimeout(() => {
